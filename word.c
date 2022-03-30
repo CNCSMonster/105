@@ -4,24 +4,11 @@
 Word getWord(void){
     Word out;
     printf("Word:\t");
-    char s[100];
-    scanf("%s",s);
-    int len=strlen(s);
-    out.word=(char* )malloc(sizeof(char)*(len+1));
-    out.word[len]='\0';
-    memcpy(out.word,s,sizeof(char)*len);
+    out.word=mystr_read(stdin);
     printf("meaning:\t");
-    scanf("%s",s);
-    len=strlen(s);
-    out.meaning=(char *)malloc(sizeof(char)*(len+1));
-    out.meaning[len]='\0';
-    memcpy(out.meaning,s,sizeof(char)*len);
+    out.meaning=mystr_read(stdin);
     printf("sentence:\t");
-    scanf("%s",s);
-    len=strlen(s);
-    out.meaning=(char *)malloc(sizeof(char)*(len+1));
-    out.meaning[len]='\0';
-    memcpy(out.meaning,s,sizeof(char)*len);
+    out.sentence=mystr_read(stdin);
     return out;
 }
 
