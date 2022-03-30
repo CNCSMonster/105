@@ -33,7 +33,10 @@ char* mystr_read(FILE* target){//´ÓÎÄ¼ş¶¯Ì¬¶ÁÈ¡Ò»¸ö×Ö·û´®£¬Óöµ½\n»òÕßÎÄ¼şÖÕÖ¹·ûÍ
     out[len]='\0';
     ms_t=&ms_h;
     for(int i=0;i<len;i++){
-
+        out[i]=ms_t->next->c;
+        struct mstr* term=ms_t->next;
+        ms_t->next=ms_t->next->next;
+        free(term);
     }
     return out;
 }

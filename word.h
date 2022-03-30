@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "mystring\\mystring.h"
+
 //我们的单词
 typedef struct myword{
     char* word;
