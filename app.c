@@ -19,6 +19,15 @@ Mwal getdata(FILE* path){
 //把单词数组链表（单词单元）中的数据存储到目标文件中
 void putdata(FILE* target,Mwal mwal){
     //把文章写入目标文件
+    Mwalp term=&mwal;
+    while(term!=NULL){
+        Mwa mwa=term->mwa;
+        for(int i=0;i<mwa.num;i++){
+            word_fput(terget,mwa.word_arr[i]);
+            fputc('\n',target);
+        }
+        term=term->next;
+    }
 }
 
 
