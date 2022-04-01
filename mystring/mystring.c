@@ -1,7 +1,7 @@
 #include "mystring.h"
 
 
-char* mystrcre(void){ //»ñµÃ¿Õ°××Ö·û´®
+char* mystr_cre(void){ //»ñµÃ¿Õ°××Ö·û´®
     char* out=(char *)malloc(sizeof(char));
     out[0]='\0';
     return out;
@@ -202,7 +202,7 @@ char* mystrcut(char*s ,int st,int end){//ÇĞ¸î³öÖ¸¶¨µÄÏÂ±ê´Óstµ½endµÄ×Ö·û´®
     //ÏÈ½øĞĞÊäÈëºÏ·¨ĞÔÅĞ¶Ï
     if(st>L-1){    //×Ö·û´®³¤¶ÈÎªL,ÔòÏÂ±ê×î´óÎªL-1
         //Èç¹û½ØÈ¡ÏÂ±êµÄ¿ªÊ¼¶¼´óÓÚ×Ö·û´®µÄÄ©Î²ÏÂ±ê
-        return mystrcre();//Ôò·µ»Ø¿Õ´®
+        return mystr_cre();//Ôò·µ»Ø¿Õ´®
     }else if(end>L-1){//½ØÈ¡µÄÄ©Î²ÏÂ±ê³¬ÏŞ£¬Ôò½ØÈ¡³¬ÏŞÖ®Ç°µÄ²¿·Ö
         return mystrcut(s,st,L-1);
     }else{
@@ -265,7 +265,7 @@ char** mystrdepart(char*s,char t,int* returnNum){//ÒÔ×Ö·ûtÎª¼ä¸ô°Ñ×Ö·û´®¸ô¿ª,·µ»
 }
 
 //°ÑsbÁ¬½Óµ½saºóÃæĞÎ³ÉĞÂµÄ×Ö·û´®£¬²¢ÊÍ·Åµôsa±¾ÉíµÄ¿Õ¼ä
-char* mystradd(char* sa,char* sb){//°ÑsbÁ¬½Óµ½saºóÃæĞÎ³ÉĞÂµÄ×Ö·û´®£¬²¢ÊÍ·Åµôsa±¾ÉíµÄ¿Õ¼ä
+char* mystr_add(char* sa,char* sb){//°ÑsbÁ¬½Óµ½saºóÃæĞÎ³ÉĞÂµÄ×Ö·û´®£¬²¢ÊÍ·Åµôsa±¾ÉíµÄ¿Õ¼ä
     char *out;
     int la=mystrlen(sa);
     int lb=mystrlen(sb);

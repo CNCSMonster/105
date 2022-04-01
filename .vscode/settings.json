@@ -7,5 +7,6 @@
     },
     "[c]": {
         "files.encoding": "gbk"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

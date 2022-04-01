@@ -19,6 +19,23 @@ Word word_get(void){
     return out;
 }
 
+//判断一个单词变量是否是合法的，并返回提示信息
+char* word_iflegal(Word word){
+    char* out=mystr_cre();
+    if(word_isempty(word)){
+        out=mystr_add(out,"输入为空");
+    }else{
+        if(!mystr_if_e(word.word)){
+            out=mystr_add(out,"单词输入不是英文");
+        }
+    }
+    if(strlen(out)==0){
+        free(out);
+        return NULL;
+    }
+    return out;
+}
+
 /*从指定文件按照一定格式读取单词信息
 如果读取不成功，则返回的结果为空的单词
 */

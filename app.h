@@ -18,7 +18,7 @@ typedef struct myappdata{
 
 App myapp;  //定义全局变量存储内容信息
 
-Mwal word_total=mwal_cre();    //定义全局的存储信息的单词存储单元
+Mwal word_total;    //定义全局的存储信息的单词存储单元
 
 //设置一开始打开的控制台窗口大小
 #define MAPP_HEIGHT 75

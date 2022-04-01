@@ -11,8 +11,8 @@ FILE* myfopen(char* filename,const char* mode){
     fs=mystrdepart(filename,'\\',&num);
     if(num>2){  //如果该文件路径中有文件夹层次
         //则要判断对应的层级的文件夹层次是否存在
-        char* foldername=mystradd(fs[0],"\\");
-        foldername=mystradd(foldername,fs[1]);
+        char* foldername=mystr_add(fs[0],"\\");
+        foldername=mystr_add(foldername,fs[1]);
         for(int i=0;i<num-2;i++){   //除了盘符和文件名，文件路径中总共要判断中间num-2个文件夹层次是否存在
             if(_access(foldername,F_OK)){  //如果对应文件层次不存在
                 int jud=_mkdir(foldername);
@@ -26,8 +26,8 @@ FILE* myfopen(char* filename,const char* mode){
                 }
             }
             //获得下一层
-            foldername=mystradd(foldername,"\\");
-            foldername=mystradd(foldername,fs[i+2]);
+            foldername=mystr_add(foldername,"\\");
+            foldername=mystr_add(foldername,fs[i+2]);
         }
         out=fopen(foldername,mode);
     }else{  //如果该文件直接在某个盘下

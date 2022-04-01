@@ -13,7 +13,7 @@
 
 //获取字符串
 //从控制台获得空白字符串
-char* mystrcre(void); 
+char* mystr_cre(void); 
 
 /*从文件动态读取一个字符串，遇到\n或者文件终止符停止
 如果读取内容为空，返回NULL,否则返回字符串指针
@@ -53,7 +53,7 @@ int mystr_if_e(char* s);
 //字符串操作
 char* mystrcut(char*s ,int st,int end);//切割出指定的下标从st到end的字符串
 char** mystrdepart(char*s,char t,int* returnNum);//以字符t为间隔把字符串隔开
-char* mystradd(char* sa,char* sb);//把sb连接到sa后面形成新的字符串，并释放掉sa,本身的空间
+char* mystr_add(char* sa,char* sb);//把sb连接到sa后面形成新的字符串，并释放掉sa,本身的空间
 
 char* mystrcpy(char* s);//复制字符串s，动态分配空间生成新的字符串返回
 
