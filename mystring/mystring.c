@@ -8,7 +8,12 @@ char* mystrcre(void){ //»ñµÃ¿Õ°××Ö·û´®
 }
 
 
-char* mystr_read(FILE* target){//´ÓÎÄ¼ş¶¯Ì¬¶ÁÈ¡Ò»¸ö×Ö·û´®£¬Óöµ½\n»òÕßÎÄ¼şÖÕÖ¹·ûÍ£Ö¹
+
+
+/*´ÓÎÄ¼ş¶¯Ì¬¶ÁÈ¡Ò»¸ö×Ö·û´®£¬Óöµ½\n»òÕßÎÄ¼şÖÕÖ¹·ûÍ£Ö¹
+Èç¹û¶ÁÈ¡ÄÚÈİÎª¿Õ£¬·µ»ØNULL,·ñÔò·µ»Ø×Ö·û´®Ö¸Õë
+*/
+char* mystr_read(FILE* target){
     char* out;
     struct mstr{    //¶¨Òå×Ö·ûÁ´±íÔİ´æ¶ÁÈ¡½á¹û
         char c;
@@ -29,6 +34,15 @@ char* mystr_read(FILE* target){//´ÓÎÄ¼ş¶¯Ì¬¶ÁÈ¡Ò»¸ö×Ö·û´®£¬Óöµ½\n»òÕßÎÄ¼şÖÕÖ¹·ûÍ
             len++;
         }
     }while(1);
+    if(len==0){
+        ms_t=&ms_h;
+        for(int i=0;i<len;i++){
+            struct mstr* term=ms_t->next;
+            ms_t->next=ms_t->next->next;
+            free(term);
+        }
+        return NULL;
+    }
     out=(char*)malloc(sizeof(char)*(len+1));
     out[len]='\0';
     ms_t=&ms_h;
@@ -40,6 +54,105 @@ char* mystr_read(FILE* target){//´ÓÎÄ¼ş¶¯Ì¬¶ÁÈ¡Ò»¸ö×Ö·û´®£¬Óöµ½\n»òÕßÎÄ¼şÖÕÖ¹·ûÍ
     }
     return out;
 }
+
+
+//×Ö·û´®¼ÓÃÜÊäÈëÊä³ö
+
+//°Ñ×Ö·û´®¼ÓÃÜºóÊä³öµ½Ö¸¶¨ÇøÓò,safe_file_put
+void mystr_sfput(FILE* target,char* s){
+    //ÕâÀïĞèÒªÓÃµ½ÎÄ¼şÈ«¾Ö¶¨ÒåµÄ¼ÓÃÜ²ÎÊı
+    s=mystrcpy(s);  //ÎªÁË·ÀÖ¹¶ÔÔ­×Ö·û´®²úÉúÓ°Ïì£¬ËùÒÔ
+    int len=strlen(s);
+    for(int i=0;i<len;i++){
+        if(((int)s[i])%2==0){
+            //×ÖÄ¸¶ÔÓ¦ascllÂëÊÇÅ¼Êı£¬Ôò¼ÓÉÏcode
+            s[i]=s[i]+MSTR_CODE;
+            s[i]=~s[i];
+        }else{
+            //Èç¹û¶ÔÒûascllÂëÊÇÆæÊı£¬Ôò¼õÈ¥code
+            s[i]=s[i]-MSTR_CODE;
+            s[i]=~s[i];
+        }
+    }
+    fprintf(target,"%s",s);
+}
+
+/*°Ñ¼ÓÃÜµÄ×Ö·û´®´ÓÖ¸¶¨ÇøÓò¶ÁÈ¡ºó½âÃÜ
+²¢·µ»Ø½âÃÜºóµÄ×Ö·û´®
+*/
+char* mystr_sget(FILE* target){
+    char* s=mystr_read(target);
+    int len=strlen(s);
+    for(int i=0;i<len;i++){
+        if(((int)s[i])%2==0){
+            //×ÖÄ¸¶ÔÓ¦ascllÂëÊÇÅ¼Êı£¬Ôò¼ÓÉÏcode
+            s[i]=~s[i];
+            s[i]=s[i]-MSTR_CODE;
+        }else{
+            //Èç¹û¶ÔÒûascllÂëÊÇÆæÊı£¬Ôò¼õÈ¥code
+            s[i]=~s[i];
+            s[i]=s[i]+MSTR_CODE;
+        }
+    }
+    return s;
+}
+
+
+
+//°ÑÒ»¸öÕûĞÍÊı×ª»¯ÎªÒ»¸ö×Ö·û´®
+char *inttostr(int num){
+    struct myints{
+        char c;
+        struct myints* next;
+    }mh,*mt,*mhp;
+    mh.next=NULL;
+    mhp=NULL;
+    int len;
+    if(num<0){
+        num=-num;
+        mt->next=(struct myints*)malloc(sizeof(struct myints));
+        mt=mt->next;
+        mt->next=NULL;
+        mt->c='-';
+        mhp=mt;
+        len++;
+    }else if(num==0){
+        return mystrcpy("0");
+    }
+    while(num!=0){
+        int cur=num%10;
+        num=(num-cur)/10;
+        mt=(struct myints*)malloc(sizeof(struct myints));
+        mt->next=mh.next;
+        mt->c=cur+48;
+        mh.next=mt;
+        len++;
+    }
+    char* out=(char*)malloc(sizeof(char)*(len+1));
+    out[len]='\0';
+    if(mhp!=NULL&&mhp->c=='-'){
+        out[0]='-';
+        mt=&mh;
+        free(mhp);
+        for(int i=1;i<len;i++){
+            out[i]=mt->next->c;
+            mhp=mt->next;
+            mt->next=mt->next->next;
+            free(mhp);
+        }
+    }else{
+        mt=&mh;
+        for(int i=0;i<len;i++){
+            out[i]=mt->next->c;
+            mhp=mt->next;
+            mt->next=mt->next->next;
+            free(mhp);
+        }
+    }
+    return out;
+}
+
+
 
 //»ñÈ¡×Ö·û´®ĞÅÏ¢
 int mystrlen(char* s){//»ñÈ¡×Ö·û´®³¤¶È
@@ -53,7 +166,8 @@ int mystrlen(char* s){//»ñÈ¡×Ö·û´®³¤¶È
     return len; //·µ»Ø×Ö·û´®³¤¶È
 }
 
-int mystrcmp(char* sa, char* sb){//±È½ÏÁ½¸ö×Ö·û´®ÊÇ·ñÏàÍ¬£¬ÏàÍ¬·µ»Ø1£¬·ñÔò·µ»Ø0
+//±È½ÏÁ½¸ö×Ö·û´®ÊÇ·ñÏàÍ¬£¬ÏàÍ¬·µ»Ø1£¬·ñÔò·µ»Ø0
+int mystreq(char* sa, char* sb){
     int la=mystrlen(sa);
     int lb=mystrlen(sb);
     if(la!=lb){//×Ö·û´®³¤¶È²»Í¬£¬Ôò×Ö·û´®¿Ï¶¨²»Í¬
@@ -139,6 +253,7 @@ char** mystrdepart(char*s,char t,int* returnNum){//ÒÔ×Ö·ûtÎª¼ä¸ô°Ñ×Ö·û´®¸ô¿ª,·µ»
     return out;
 }
 
+//°ÑsbÁ¬½Óµ½saºóÃæĞÎ³ÉĞÂµÄ×Ö·û´®£¬²¢ÊÍ·Åµôsa±¾ÉíµÄ¿Õ¼ä
 char* mystradd(char* sa,char* sb){//°ÑsbÁ¬½Óµ½saºóÃæĞÎ³ÉĞÂµÄ×Ö·û´®£¬²¢ÊÍ·Åµôsa±¾ÉíµÄ¿Õ¼ä
     char *out;
     int la=mystrlen(sa);
@@ -168,12 +283,52 @@ char* mystrcpy(char* s){//¸´ÖÆ×Ö·û´®s£¬¶¯Ì¬·ÖÅä¿Õ¼äÉú³ÉĞÂµÄ×Ö·û´®·µ»Ø
 }
 
 //°Ñ×Ö·û´®×ª»¯ÎªÆäËûÀàĞÍ
-int mystrtoint(char* s){//°Ñ×Ö·û´®×ª»¯ÎªÕûÊı£¨²»¿¼ÂÇ¸ºÊı£©
+
+/*ÅĞ¶ÏÒ»¸ö×Ö·û´®ÄÜ·ñ×ª»¯ÎªÕûÊı
+Èç¹ûÄÜ£¬·µ»Ø1£¬·ñÔò·µ»Ø0
+*/
+int str_ifint(char* s){
+    if(s==NULL){
+        return 0;
+    }
+    int len=mystrlen(s);    //mystrlen¿ÉÒÔÓÃstrlen´úÌæ
+    if(len==0){
+        return 0;
+    }else if(len==1&&(s[0]<48||s[0]>57)){
+        return 0;
+    }
+    if(s[0]!='-'&&(s[0]<48||s[0]>57)){
+        return 0;
+    }
+    for(int i=1;i<len;i++){
+        if(s[i]<48||s[i]>57){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+
+//°Ñ×Ö·û´®×ª»¯ÎªÕûÊı,Èç¹ûÊäÈë×Ö·û´®²»ºÏ·¨£¬½á¹û·µ»Ø0
+int mystrtoint(char* s){
+    //Ìæ»»º¯Êı£ºatoi
+    if(!str_ifint(s)){
+        return 0;
+    }
     int out=0;
-    int i=0;
-    while(s[i]!='\0'){//±éÀú°ÑÃ¿Ò»Î»¼ÓÉÏ
-        out=out*10+(s[i]-48);
-        i++;
+    if(s[0]=='-'){
+        int i=1;
+        while(s[i]!='\0'){//±éÀú°ÑÃ¿Ò»Î»¼ÓÉÏ
+            out=out*10+(s[i]-48);
+            i++;
+        }
+        out=-out;
+    }else{
+        int i=0;
+        while(s[i]!='\0'){//±éÀú°ÑÃ¿Ò»Î»¼ÓÉÏ
+            out=out*10+(s[i]-48);
+            i++;
+        }
     }
     return out;
 }

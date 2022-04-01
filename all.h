@@ -7,6 +7,18 @@
 #include <conio.h>
 #include <windows.h>
 
+#include "word.h"
+#include "word.c"
+
+#include "mystring\\mystring.h"
+#include "mystring\\mystring.c"
+
+#include "myrecord\\record.h"
+#include "myrecord\\record.c"
+
+
+
+
 
 
 

@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "string.h": "c",
-        "mystring.h": "c"
+        "mystring.h": "c",
+        "record.h": "c"
+    },
+    "[c]": {
+        "files.encoding": "gbk"
     }
 }
