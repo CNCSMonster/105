@@ -38,6 +38,8 @@ Word word_get(void);
 */
 Word word_read(FILE* path);
 
+//把单词信息写入指定文件，前后没有\n
+void word_fput(FILE* path,Word word);
 
 //判断单词变量是否是空的，如果是空的返回1，否则返回0
 int word_isempty(Word word);

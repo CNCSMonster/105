@@ -38,8 +38,15 @@ char *inttostr(int num);//把某个整数转化为字符串
 
 
 //获取字符串信息
+
+//获取字符串长度
 int mystrlen(char* s);//获取字符串长度
-int mystreq(char* sa, char* sb);//比较两个字符串是否相同，相同返回1，否则返回0
+
+//比较两个字符串是否相同，相同返回1，否则返回0
+int mystreq(char* sa, char* sb);
+
+//判断这个字符串是不是英文字符串,如果是返回1，否则返回0
+int mystr_if_e(char* s);
 
 
 

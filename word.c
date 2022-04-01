@@ -27,6 +27,7 @@ Word word_read(FILE* path){
     out.meaning=NULL;
     out.word=NULL;
     out.sentence=NULL;
+    out.kind=-1;    //-1表示默认的无分类信息
     int jud=fscanf(path,"%d\n",&(out.kind));
     if(jud!=1){
         return out;
@@ -48,7 +49,14 @@ Word word_read(FILE* path){
     return out;
 }
 
-
+//把单词信息写入指定文件，前后没有\n
+void word_fput(FILE* path,Word word){
+    if(word_isempty(word)){
+        return;
+    }else{
+        fprintf(path,"%d\n%s\n%s\n%s",word.kind,word.word,word.meaning,word.sentence);
+    }
+}
 
 //判断单词变量是否是空的
 int word_isempty(Word word){

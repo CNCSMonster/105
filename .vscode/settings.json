@@ -2,7 +2,8 @@
     "files.associations": {
         "string.h": "c",
         "mystring.h": "c",
-        "record.h": "c"
+        "record.h": "c",
+        "typeinfo": "cpp"
     },
     "[c]": {
         "files.encoding": "gbk"

@@ -16,6 +16,8 @@
 #include "myrecord\\record.h"
 #include "myrecord\\record.c"
 
+#include "mytime.h"
+#include "mytime.c"
 
 
 

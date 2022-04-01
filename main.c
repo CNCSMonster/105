@@ -19,6 +19,13 @@ int main(){
     // printf("%s",i);
     // free(i);
 
+    int year;
+    int month;
+    int day;
+    gettime(&year,&month,&day);
+    printf("%d,%d,%d",year,month,day);
+
+
     //尝试文件加密和解开密码
     FILE* path=myfopen("E:\\9999.txt","w");
     char* s=mystrcpy("Hello world!");

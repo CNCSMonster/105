@@ -58,6 +58,7 @@ char* mystr_read(FILE* target){
 
 //字符串加密输入输出
 
+
 //把字符串加密后输出到指定区域,safe_file_put
 void mystr_sfput(FILE* target,char* s){
     //这里需要用到文件全局定义的加密参数
@@ -182,7 +183,17 @@ int mystreq(char* sa, char* sb){
     return 1;//经过上述程序还没有退出函数，说明两个字符串没有不同
 }
 
-
+//判断这个字符串是不是英文字符串,如果是返回1，否则返回0
+int mystr_if_e(char* s){
+    int len=mystrlen(s);    //这里可以用strlen代替
+    for(int i=0;i<len;i++){
+        s[i]=s[i]<97?s[i]+32:s[i];
+        if(s[i]<97||s[i]>122){
+            return 0;
+        }
+    }
+    return 1;
+}
 
 //字符串操作
 char* mystrcut(char*s ,int st,int end){//切割出指定的下标从st到end的字符串

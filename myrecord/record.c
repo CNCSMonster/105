@@ -41,3 +41,18 @@ FILE* myfopen(char* filename,const char* mode){
 
     return out;
 }
+
+//判断一个字符串是否是合法的文件路径
+int ispath(char* s){
+    //如何判断字符串是不是合法的字符串
+    //假设只有C,D, E盘的情况
+    //TODO
+
+    return 0;
+}
+
+
+
+
+
+
