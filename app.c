@@ -23,7 +23,7 @@ void putdata(FILE* target,Mwal mwal){
     while(term!=NULL){
         Mwa mwa=term->mwa;
         for(int i=0;i<mwa.num;i++){
-            word_fput(terget,mwa.word_arr[i]);
+            word_fput(target,mwa.word_arr[i]);
             fputc('\n',target);
         }
         term=term->next;
@@ -45,13 +45,55 @@ void putdata(FILE* target,Mwal mwal){
 
 //实现界面
 //界面显示,显示len条选项
-void show_choice(char** sa,int len);
+void show_choice(char** sa,char* choice,int len){
+    printf("\n");
+    for(int i=0;i<len;i++){
+        printf("%c.%s\n",choice[i],sa[i]);
+    }
+}
 
 //获取界面选择,获取choice里面的选择
-char get_choice(char* choice,int len);
+char get_choice(char* choice,int len){
+    printf("input your choice:");
+    int t=1;
+    do{
+        char* s=mystr_read(stdin);
+        fflush(stdin);
+        int slen=mystrlen(s);
+        char jud='y';//jud用来判断正确还是错误
+        if(slen!=1){ 
+            jud='n';
+        }else{
+            int i;
+            for(i=0;i<len;i++){
+                // printf("\n%c,%c",choice[i],s[0]);
+                if(s[0]==choice[i]){
+                    // printf("get%c",s[0]);
+                    break;
+                }
+            }
+            // printf("i:%d",i);
+            if(i==len){
+                jud='n';
+            }
+        }
+        if(jud=='n'){ //如果输入不正确
+            printf("Input Error!Please input again:");
+        }else{  //如果输入正确
+            char out=s[0];
+            free(s);
+            return out;
+        }
+        free(s);
+    }while(1);
+}
 
 //控制控制台窗口大小,
-void console_setsize(int height,int width);
+void console_setsize(int height,int width){
+    char s[100];
+    sprintf(s,"mode con cols=%d lines=%d",height,width);
+    system(s);
+}
 
 
 
@@ -60,39 +102,133 @@ void console_setsize(int height,int width);
 具体功能实现
 */
 
-//初始化应用信息,并初始化总
-void app_init(void);
+//初始化应用信息,并初始化总记录数组
+void app_init(void){
+    
+    //获取数据
+
+
+    //获取总数据
+    FILE* path=myfopen(MYENGLISH,"r");
+    if(path==NULL){
+        word_total=mwal_cre();
+    }else{
+        word_total=getdata(path);
+        fclose(path);
+    }
+
+    //获取今日数据
+    //获取今日日期
+    char* time=get_time_str();
+    //获取
+
+
+
+
+    //获取应用信息
+    path=myfopen(MAPP,"r");
+    if(path==NULL){
+        myapp.kind=NULL;
+        myapp.kindSize=0;
+    }else{
+        int kindSize;
+        int jud=fscanf(path,"%d",&kindSize);
+        if(jud!=1){
+            myapp.kind=NULL;
+            myapp.kindSize=0;
+        }
+        myapp.kindSize=kindSize;
+        myapp.kind=(char**)malloc(sizeof(char*)*kindSize);
+        for(;kindSize>0;kindSize--){
+            char* term=mystr_read(path);
+            if(term==NULL){
+                break;
+            }else{
+                myapp.kind[myapp.kindSize-kindSize]=term;
+            }
+        }
+        if(kindSize!=0){    //如果读取到的信息有缺,则清空信息
+            for(;kindSize<=myapp.kindSize;kindSize++){
+                free(myapp.kind[kindSize]);
+            }
+            free(myapp.kind);
+            myapp.kindSize=0;
+        }
+        fclose(path);
+    }
+
+
+
+}
+
+//应用进程结束后写入文件(并释放所有分配了的空间)
+void app_end(void){
+
+}
+
+//应用过程中刷新文件信息(把更新的数据写入文件)，采用多线程的方法使用它
+void app_flash(void){
+
+}
+
 
 
 //主界面
-void main_choice(void);
+void main_choice(void){
+
+}
 
 //退出主界面,退出主界面的时候才会把一切写入文件之中
-void main_exit(void);
+void main_exit(void){
+
+}
 
 //设置界面
-void set_choice(void);
+void set_choice(void){
+
+}
 
 //帮助界面
-void help_choice(void);
+void help_choice(void){
+
+}
 
 //开始使用界面
-void start_choice(void);
+void start_choice(void){
+
+}
 
 //添加单词界面，添加的单词默认为无类型,但可以选择类型（但是只加不改）
-void mywordadd(void);
+void mywordadd(void){
+
+}
 
 //今日复习界面
-void myreview(void);
+void myreview(void){
+
+}
 
 //阅览单词界面:搜索（可以对此操作），分类界面，退出
-void view_choice(void);
+void view_choice(void){
+
+}
 
 //分类界面,选择分类进行查看，只读不改
-void divide_choice(void);
+void divide_choice(void){
+
+}
 
 //阅览所选择的分类
-void divide_show(Mwal show); 
+void divide_show(Mwal show){
+
+}
 
 //导出md文档，所以会检查输入，根据输入的英文文件名，导出一个md文档
-void outputmd(void);    
+void outputmd(void){
+
+}   
+
+
+
+
+

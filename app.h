@@ -20,6 +20,8 @@ App myapp;  //定义全局变量存储内容信息
 
 Mwal word_total;    //定义全局的存储信息的单词存储单元
 
+Mwal word_today;
+
 //设置一开始打开的控制台窗口大小
 #define MAPP_HEIGHT 75
 #define MAPP_WIDTH 100
@@ -27,14 +29,16 @@ Mwal word_total;    //定义全局的存储信息的单词存储单元
 //主要单词数据文件
 #define MYENGLISH "E:\\Eglishword\\wordall.txt"
 
-//应用数据文件,里面记录了单词分类表等信息
-#define MEAPP "E:\\Eglishword\\app.txt"
+//应用的数据文件,里面记录了单词分类表等设置信息
+#define MAPP "E:\\Eglishword\\settings.txt"
 
-//日期文件夹，里面记录了今天一天的文件信息，第一个内容就是日期。
-#define MTODAY "E:\\Eglishword\\today.txt"
+//按照日期分类的文件存储的文件夹
+#define MDAY_CLASSIFY "E:\\Eglish\\day_classify"
 
-//分类数据文件夹路径，里面是分类的文件的信息：信息格式信息个数，信息条数
-#define DVFOLDER "E:\\Eglishword\\divide.txt"
+//我的meaning_classify文件夹
+#define MMN_CLASSIFY "E:\\Eglishword\\meaning_classify"
+
+
 
 //获取一个总的文件
 //因为是背单词软件，所以总的词汇量应该达到了10000量级
@@ -63,7 +67,7 @@ void putdata(FILE* target,Mwal mwal);
 
 //实现界面
 //界面显示,显示len条选项
-void show_choice(char** sa,int len);
+void show_choice(char** sa,char* choice,int len);
 
 //获取界面选择,获取choice里面的选择
 char get_choice(char* choice,int len);
@@ -80,6 +84,13 @@ void console_setsize(int height,int width);
 
 //初始化应用信息,并初始化总
 void app_init(void);
+
+
+//应用进程结束后写入文件
+void app_end(void);
+
+//应用过程中刷新文件信息(把更新的数据写入文件)，采用多线程的方法使用它
+void app_flash(void);
 
 
 //主界面

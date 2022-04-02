@@ -108,7 +108,7 @@ Word str_to_word(char* s){
             out.sentence=NULL;
             out.word=NULL;
         }else{
-            if(!str_ifint(sa[0])){
+            if(!mystr_if_i(sa[0])){
                 for(int i=0;i<num;i++){
                     free(sa[i]);
                 }

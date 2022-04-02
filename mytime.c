@@ -12,6 +12,26 @@ void gettime(int* year,int* month,int* day){
     *day=p->tm_mday;    
 }
 
+/*
+获得表示当天日期的字符串，格式为：20xx/(x)x/(x)x,
+也就是年/月/日，*/
+char* get_time_str(void){
+    char* out;
+    int year;
+    int mon;
+    int day;
+    gettime(&year,&mon,&day);
+    char* ys=inttostr(year);
+    char* ms=inttostr(mon);
+    char* ds=inttostr(day);
+    int len=strlen(ys)+strlen(ms)+strlen(ds)+2;
+    out=(char*)malloc(sizeof(char)*(len+1));
+    sprintf(out,"%s/%s/%s",ys,ms,ds);
+    free(ys);
+    free(ms);
+    free(ds);
+    return out;
+}
 
 
 

@@ -298,7 +298,7 @@ char* mystrcpy(char* s){//复制字符串s，动态分配空间生成新的字符串返回
 /*判断一个字符串能否转化为整数
 如果能，返回1，否则返回0
 */
-int str_ifint(char* s){
+int mystr_if_i(char* s){
     if(s==NULL){
         return 0;
     }
@@ -323,7 +323,7 @@ int str_ifint(char* s){
 //把字符串转化为整数,如果输入字符串不合法，结果返回0
 int mystrtoint(char* s){
     //替换函数：atoi
-    if(!str_ifint(s)){
+    if(!mystr_if_i(s)){
         return 0;
     }
     int out=0;

@@ -10,6 +10,10 @@
 //获得当天日期
 void gettime(int* year,int* month,int* day);
 
+/*
+获得表示当天日期的字符串，格式为：20xx/(x)x/(x)x,
+也就是年/月/日，*/
+char* get_time_str(void);
 
 
 #endif
