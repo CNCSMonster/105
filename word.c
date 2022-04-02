@@ -9,7 +9,7 @@
 */
 Word word_get(void){
     Word out;
-    out.kind=0;
+    out.kind=WORD_DEFAULT_KIND;     //单词类型为默认类型
     printf("Word:\t");
     out.word=mystr_read(stdin);
     printf("meaning:\t");
@@ -44,7 +44,7 @@ Word word_read(FILE* path){
     out.meaning=NULL;
     out.word=NULL;
     out.sentence=NULL;
-    out.kind=-1;    //-1表示默认的无分类信息
+    out.kind=WORD_DEFAULT_KIND;    //单词类型为头文件定义的默认类型
     int jud=fscanf(path,"%d\n",&(out.kind));
     if(jud!=1){
         return out;
@@ -137,6 +137,11 @@ Word word_cpy(Word base){
     int len;
     out.kind=base.kind;
     len=strlen(base.word);
+    // out.word=mystrcpy(base.word);
+    // out.meaning=mystrcpy(base.meaning);
+    // out.sentence=mystrcpy(base.sentence);
+
+    //新方法
     out.word=(char *)malloc(sizeof(char)*(len+1));
     out.word[len]='\0';
     memcpy(out.word,base.word,sizeof(char)*len);
@@ -147,9 +152,10 @@ Word word_cpy(Word base){
     memcpy(out.meaning,base.meaning,sizeof(char)*len);
 
     len=strlen(base.sentence);
-    out.word=(char *)malloc(sizeof(char)*(len+1));
-    out.word[len]='\0';
-    memcpy(out.word,base.word,sizeof(char)*len);
+    out.sentence=(char *)malloc(sizeof(char)*(len+1));
+    out.sentence[len]='\0';
+    memcpy(out.sentence,base.sentence,sizeof(char)*len);
+    return out;
 }
 
 //控制台打印显示单词信息
@@ -244,6 +250,32 @@ int mwal_add(Mwalp mwalh,Word word){
     return 1;
 }
 
+//从单词数组链表中取出指定类型的单词，把他们装入一个单词数组链表返回
+Mwal mwal_get_kindpart(Mwalp mwalp,int kind){
+    Mwal out=mwal_cre();
+    while(mwalp!=NULL){
+        Mwa term=mwalp->mwa;
+        for(int i=0;i<term.num;i++){
+            if(term.word_arr[i].kind==kind){
+                mwal_add(&out,term.word_arr[i]);
+            }
+        }
+        mwalp=mwalp->next;
+    }
+    return out;
+}
+
+//从单词数组链表中获得数组链表中的单词的个数
+int mwal_getsize(Mwal mwal){
+    int out=0;
+    Mwalp mwalp=&mwal;
+    while(mwalp->next!=NULL){
+        mwalp=mwalp->next;
+        out+=WORD_ARR_MAX;  //则有前面有一个数组满了
+    }
+    out+=mwalp->mwa.num;
+    return out;
+}
 
 //清空一个数组链表
 void mwal_delete(Mwalp mwalp){

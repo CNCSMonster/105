@@ -14,9 +14,15 @@ int main(){
     */
     //单词限制为一个，中文解释限制为一个。
     
-    main_choice();
+    // main_choice();
 
-
+    //单元测试，divide_show 
+    Mwal m=mwal_cre();
+    Word w=word_get();
+    mwal_add(&m,w);
+    printf("显示分类");
+    divide_show(m);
+    getch();
 
     return 0;
 

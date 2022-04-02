@@ -34,7 +34,7 @@ void putdata(FILE* target,Mwal mwal){
 /*
 命令界面：
 主界面：开始使用，帮助，设置
-开始使用：添加单词,今日复习，阅览单词，退出
+开始使用：添加单词,今日复习，阅览单词，导出为md文件，退出
 帮助：显示如何使用
 设置：设置快捷键，以及删除该程序
 删除该程序：删除对应文件，或者保留对应单词文件但是保留exe
@@ -310,55 +310,345 @@ void help_choice(void){
 void start_choice(void){
     // 开始使用：添加单词,今日复习，阅览单词，退出
     //设计命令
-    int len=4;
-    char* order[len]={
-        mystrcpy("添加单词"),
-        mystrcpy("今日复习"),
-        mystrcpy("阅览单词"),
-        mystrcpy("退出")
-    };
-    char choice[len]={
-        '0','1','2','e'
-    };
+    int len=5;
+    char** order=(char **)malloc(sizeof(char*)*len);
+    order[0]=mystrcpy("添加单词");
+    order[1]=mystrcpy("今日复习");
+    order[2]=mystrcpy("阅览单词");
+    order[3]=mystrcpy("导出为md文档");
+    order[4]=mystrcpy("退出");
+    char choice[5]={'0','1','2','3','e'};
     char curchoice;
     do{
+        system("cls");
         show_choice(order,choice,len);
         curchoice=get_choice(choice,len);
-    }while(curchoice!=choice[3]);
+        switch(curchoice){
+            case '0':
+                system("cls");
+                mywordadd();
+            break;
+            case '1':
+                system("cls");
+                myreview();
+            break;
+            case '2':
+                system("cls");
+                view_choice();
+            break;
+            case '3':
+                system("cls");
+                outputmd();
+            break;
+            default:
+            break;
+        }
+    }while(curchoice!=choice[len-1]);
     //释放空间
     for(int i=0;i<len;i++){
         free(order[i]);
     }
+    free(order);
 }
+
 
 //添加单词界面，添加的单词默认为无类型,但可以选择类型（但是只加不改）
 void mywordadd(void){
-    
+    //功能界面
+    printf("命令:c--清屏,s--设置,e--退出,其他字母--继续:\n");
+    //设置处可以设置该界面风格.
+    do{//输入之后可以选择下拉也可以选择刷新界面
+        //不去检查非法输入了，只要选择的不是c/s/e就是添加
+        printf("your choice:");
+        char curord=getch();
+        printf("\r");
+        for(int i=0;i<30;i++){    //清空当前行，保持界面美观
+            printf(" ");
+        }
+        printf("\r");
+        fflush(stdin);
+        if(curord=='e'){
+            break;
+        }else if(curord=='c'){
+            system("cls");
+            printf("命令:c--清屏,s--设置,e--退出,其他字母--继续:\n");
+        }else if(curord=='s'){
+            printf("该功能能未实现,按任意键继续");
+            getch();
+            printf("\r");
+            for(int i=0;i<40;i++){
+                printf(" ");
+            }
+            printf("\r");
+        }else{  //进行任务
+            Word add=word_get();
+            char* jud=word_iflegal(add);
+            if(jud!=NULL){ //如果输入错误
+                printf("你的输入%s",jud);
+                free(jud);
+                printf("\n************************************************\n");
+            }else if(mwal_find(&word_total,add.word)!=NULL){  //如果这个单词已经输入过了
+                printf("该单词已被输入\n");
+                printf("\n************************************************\n");
+                word_delete(add);
+            }else{  //可以添加，添加
+                printf("添加完成！\n");
+                mwal_add(&word_total,add);
+                mwal_add(&word_today,add);
+                word_delete(add);
+                printf("\n************************************************\n");
+            }
+            continue;
+        }
+    }while(1);
+
 }
 
 //今日复习界面
 void myreview(void){
-
+    //功能界面
+    //展示今日的单词
+    divide_show(word_today);
 }
 
-//阅览单词界面:搜索（可以对此操作），分类界面，退出
+//阅览单词界面:搜索（可以对此操作），分类查看，退出
 void view_choice(void){
-
+    //选择界面
+    //设计命令
+    int len=3;
+    char** order=(char **)malloc(sizeof(char*)*len);
+    order[0]=mystrcpy("搜索");
+    order[1]=mystrcpy("分类查看");
+    order[2]=mystrcpy("退出");
+    char choice[3]={'0','1','e'};
+    char curchoice;
+    do{
+        show_choice(order,choice,len);
+        curchoice=get_choice(choice,len);
+        switch(curchoice){
+            case '0':
+                system("cls");
+                view_find();
+            break;
+            case '1':
+                system("cls");
+                divide_choice();
+            break;
+            default:
+            break;
+        }
+    }while(curchoice!=choice[2]);
+    //释放空间
+    for(int i=0;i<len;i++){
+        free(order[i]);
+    }
+    free(order);
+    
 }
+
+//搜索想找的单词，并且可以对搜索到的单词操作
+void view_find(void){
+    //功能界面
+    printf("暂时没有实现");
+    system("pause");
+}
+
 
 //分类界面,选择分类进行查看，只读不改
 void divide_choice(void){
 
+    //设计命令
+    if(myapp.kindSize==0){
+        //如果所有单词都没有分类的话，被归于默认分类
+        printf("所有单词均未分类，该功能无法使用。");
+        fflush(stdin);
+        printf("请按任意键继续");
+        getch();
+        return ;
+    }
+    int len=myapp.kindSize+1;
+    char** order=(char**)malloc(sizeof(char*)*len); //后面需要释放空间
+    char choice[len];
+    for(int i=0;i<len-1;i++){
+        order[i]=myapp.kind[i]; //因为这里用来显示命令的是引用，而没有新分配空间，所以函数中无需释放
+        choice[i]=i+48;        //不考虑分类超过10个的情况，这里把分类转为对应字符
+    }
+    choice[len]='e';
+
+    //定义暂存的单词基本存储单元链表，避免多次重复加载
+    typedef struct curwordbase{
+        Mwalp mwalp;
+        int kind;
+        struct curwordbase* next;
+    }Cw,*Cwp;
+    Cw cw_h;    //定义头结点，该节点用来保存访问起点，不存储数据
+    cw_h.next=NULL; //初始时首元节点为0，表示没有保存任何分类的单元链表
+    Cwp cw_t=&cw_h;
+    char curchoice;
+    do{
+        show_choice(order,choice,len);
+        printf("\n请输入你要选择查看的分类或者退出\n");
+        curchoice=get_choice(choice,len);
+        if(curchoice=='e'){
+            break;
+        }else{
+            system("cls");
+            //获取自己需要的分类，进行查看
+            //首先获得的分类，获得的选择转化为整数
+            int thischoice=curchoice-48;
+            //先查找已经加载了的分类数据中是否存在所选类型的分类存储
+            Mwalp cur_mwalp;    //当前的单词数组链表单元
+            cw_t=&cw_h;
+            while(cw_t->next!=NULL){
+                if(cw_t->next->kind==thischoice){
+                    //如果自己选择的分类数据已经存在
+                    cur_mwalp=cw_t->next->mwalp;
+                }
+                cw_t=cw_t->next;
+            }
+            if(cw_t->next==NULL){
+                //如果自己选择的分类数据未加载
+                //则获得自己想要的分类
+                cw_t->next=(Cwp)malloc(sizeof(Cw));
+                cw_t=cw_t->next;
+                cw_t->next=NULL;
+                Mwal mwal_t=mwal_get_kindpart(&word_total,thischoice);
+                cw_t->mwalp=&mwal_t;
+                cw_t->kind=thischoice;
+                cur_mwalp=cw_t->mwalp;
+            }
+            //然后展示阅览界面
+            system("cls");
+            divide_show(*cur_mwalp);
+        }
+    }while(curchoice!=choice[len-1]);
+    free(order);
+    //释放使用的单词存储单元链表的空间
+    while(cw_h.next!=NULL){
+        cw_t=cw_h.next;
+        cw_h.next=cw_h.next->next;
+        mwal_delete(cw_t->mwalp);
+        free(cw_t);
+    }
+
 }
+
+
+
 
 //阅览所选择的分类
 void divide_show(Mwal show){
-
+    //功能界面
+    //展示自己输入的单词
+    int max=4;  //一页显示的单词的最大数量
+    int total=mwal_getsize(show);  //用来记录总的单词数,则总的单词页数为
+    if(total==0){
+        printf("该列表为空。");
+        printf("\n请按任意键继续");
+        getch();
+        return ;
+    }
+    int totalpage=total%max==0?(total/max):(total/max+1);
+    /*
+    则总页数为：total%max==0?total/max:total/max+1
+    */
+    int cur_page=0; //记录当前页数,下标从0-totalpage-1
+    Mwalp cur_mwalp=&show;  //记录当前单词数组链表的当前显示结点
+    int cur_index=0;    //记录当前单词数组链表的当前显示结点下标
+    char cur_choice;  //记录当前获取的选项
+    do{
+        //展示当前页面的单词
+        system("cls");
+        Mwalp cur_show=cur_mwalp;
+        int index_show=cur_index;
+        for(int i=0;i<max&&i<cur_show->mwa.num;i++){
+            printf("\n");
+            word_show(cur_show->mwa.word_arr[index_show]);
+            index_show++;
+            if(index_show==WORD_ARR_MAX){   //如果当前的数组结点读取到头了
+                if(cur_show->next!=NULL){    //如果下一级还有数组结点
+                    cur_show=cur_show->next;
+                    index_show=0;
+                }else{  //否则结束循环
+                    break;
+                }
+            }
+        }
+        printf("\n当前页数/总页数:%d/%d",cur_page+1,totalpage);
+        printf("\n往前/往后翻页/退出查看:a/d/e");
+        cur_choice=getch();
+        while(cur_choice!='a'&&cur_choice!='d'&&cur_choice!='e'){
+            cur_choice=getch();
+        }
+        if(cur_choice=='e'){
+            break;
+        }else{      //不达成循环效果，达到下(上)边界后就不能够减(增)
+            switch(cur_choice){
+                case 'a':   //往前翻页
+                    if(cur_page>=0){
+                        cur_page--;
+                        cur_index-=max;
+                        if(cur_index<0){
+                            Mwalp ttt=&show;
+                            while(ttt->next!=cur_mwalp){
+                                ttt=ttt->next;
+                            }
+                            cur_mwalp=ttt;
+                            cur_index=(cur_index+WORD_ARR_MAX)%WORD_ARR_MAX;
+                        }
+                    }
+                break;
+                case 'd':   //往后翻页
+                    if(cur_page<totalpage-1){ //如果还能够往后翻页
+                        cur_page++;
+                        cur_index+=max;
+                        if(cur_index>=WORD_ARR_MAX){
+                            cur_index=cur_index%WORD_ARR_MAX;
+                            cur_mwalp=cur_mwalp->next;
+                        }
+                    }
+                break;
+                default:
+                break;
+            }
+        }
+    }while(cur_choice!='e');
 }
 
 //导出md文档，所以会检查输入，根据输入的英文文件名，导出一个md文档
 void outputmd(void){
-
+    //加入开始使用之中
+    //功能界面
+    //选项：导出位置设置(默认为当前位置,也就是exe所在位置)，导出
+    //导出会把自己记载的单词分类导出到各个位置，并且命名为自己命名的位置
+    //输入文件名字(先实现这个功能)
+    printf("\n请输入想要保存为的文件名字(纯粹英文):");
+    char* name=mystr_read(stdin);
+    while(!mystr_if_e(name)){
+        free(name);
+        printf("输入不符合规范，请重新输入：");
+        name=mystr_read(stdin);
+    }
+    //首先打开对应的文件
+    char path[strlen(name)+5];
+    sprintf(path,"%s.md",name);
+    free(name);
+    FILE* mf=fopen(path,"w");   //使用相对路径
+    fprintf(mf,"# My English Word Book\n\n");    //写入大标题
+    fprintf(mf,"[TOC]\n\n");     //写入目录
+    fprintf(mf,"## A. total words\n\n");    //写入次级标题
+    putdata(mf,word_total);
+    fprintf(mf,"\n\n## B. division");
+    for(int i=0;i<myapp.kindSize;i++){  
+        fprintf(mf,"\n\n### %d. %s",i+1,myapp.kind[i]);
+        Mwal term=mwal_get_kindpart(&word_total,i);
+        putdata(mf,term);
+        mwal_delete(&term);
+    }
+    fclose(mf);
+    printf("导出成功！");
+    printf("请按任意键继续！");
+    getch();
 }   
 
 

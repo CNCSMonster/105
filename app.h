@@ -39,7 +39,6 @@ Mwal word_today;
 #define MMN_CLASSIFY "E:\\Eglishword\\meaning_classify"
 
 
-
 //获取一个总的文件
 //因为是背单词软件，所以总的词汇量应该达到了10000量级
 //所以后面应该使用数据库来进行数据读存的管理
@@ -114,6 +113,9 @@ void myreview(void);
 
 //阅览单词界面:搜索（可以对此操作），分类界面，退出
 void view_choice(void);
+
+//搜索想找的单词，并且可以对搜索到的单词操作
+void view_find(void);
 
 //分类界面,选择分类进行查看，只读不改
 void divide_choice(void);

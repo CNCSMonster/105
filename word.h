@@ -18,6 +18,9 @@ typedef struct myword{
 //定义单词数组的最大值
 #define WORD_ARR_MAX 100
 
+#define WORD_DEFAULT_KIND 0
+
+
 //单词数组
 typedef struct mywordarr{
     Word word_arr[WORD_ARR_MAX];
@@ -96,6 +99,11 @@ Wordp mwal_find(Mwalp mwalh,char* word);
 */
 int mwal_add(Mwalp mwalh,Word word);
 
+//从单词数组链表中取出指定类型的单词，把他们装入一个单词数组链表返回
+Mwal mwal_get_kindpart(Mwalp mwalp,int kind);
+
+//从单词数组链表中获得数组链表中的单词的个数
+int mwal_getsize(Mwal mwal);
 
 //清空一个单词数组链表，释放里面所有空间
 void mwal_delete(Mwalp mwalp);
