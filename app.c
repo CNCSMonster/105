@@ -107,7 +107,6 @@ void app_init(void){
     
     //获取数据
 
-
     //获取总数据
     FILE* path=myfopen(MYENGLISH,"r");
     if(path==NULL){
@@ -121,9 +120,20 @@ void app_init(void){
     //获取今日日期
     char* time=get_time_str();
     //获取
-
-
-
+    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+6;
+    char* today=(char*)malloc(sizeof(char)*len);
+    sprintf(today,"%s\\%s.txt",MDAY_CLASSIFY,time);
+    free(time);
+    path=myfopen(today,"r");
+    free(today);
+    if(path==NULL){
+        //如果今天的文件信息不存在
+        word_today=mwal_cre();
+    }else{
+        //如果今天的文件信息存在
+        word_today=getdata(path);
+        fclose(path);
+    }
 
     //获取应用信息
     path=myfopen(MAPP,"r");
@@ -133,74 +143,197 @@ void app_init(void){
     }else{
         int kindSize;
         int jud=fscanf(path,"%d",&kindSize);
-        if(jud!=1){
+        if(jud!=1||kindSize<=0){
             myapp.kind=NULL;
             myapp.kindSize=0;
-        }
-        myapp.kindSize=kindSize;
-        myapp.kind=(char**)malloc(sizeof(char*)*kindSize);
-        for(;kindSize>0;kindSize--){
-            char* term=mystr_read(path);
-            if(term==NULL){
-                break;
-            }else{
-                myapp.kind[myapp.kindSize-kindSize]=term;
+        }else{
+            myapp.kindSize=kindSize;
+            myapp.kind=(char**)malloc(sizeof(char*)*kindSize);
+            for(;kindSize>0;kindSize--){
+                char* term=mystr_read(path);
+                if(term==NULL){
+                    break;
+                }else{
+                    myapp.kind[myapp.kindSize-kindSize]=term;
+                }
             }
-        }
-        if(kindSize!=0){    //如果读取到的信息有缺,则清空信息
-            for(;kindSize<=myapp.kindSize;kindSize++){
-                free(myapp.kind[kindSize]);
+            if(kindSize!=0){    //如果读取到的信息有缺,则清空信息
+                for(;kindSize<=myapp.kindSize;kindSize++){
+                    free(myapp.kind[kindSize]);
+                }
+                free(myapp.kind);
+                myapp.kindSize=0;
+                myapp.kind=NULL;
             }
-            free(myapp.kind);
-            myapp.kindSize=0;
+            fclose(path);
         }
-        fclose(path);
     }
-
-
-
 }
 
 //应用进程结束后写入文件(并释放所有分配了的空间)
 void app_end(void){
+    //写文件
+
+    //把app信息写入文件
+    FILE* path=myfopen(MAPP,"w");
+    if(myapp.kind==NULL){   //如果app信息为空
+        fprintf(path,"%d\n",0);
+    }else{  //如果app中记录有分类信息
+        fprintf(path,"%d\n",myapp.kindSize);
+        for(int i=0;i<myapp.kindSize;i++){
+            fprintf(path,"%s\n",myapp.kind[i]);
+        }
+    }
+    fclose(path);
+
+    //把今天新录单词写入文件
+    //获取今日日期
+    char* time=get_time_str();
+    //获取
+    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+2;
+    char* today=(char*)malloc(sizeof(char)*len);
+    sprintf(today,"%s\\%s.txt",MDAY_CLASSIFY,time);
+    free(time);
+    path=myfopen(today,"w");
+    putdata(path,word_today);
+    fclose(path);
+    free(today);
+
+    //把总单词信息写入文件
+    path=myfopen(MYENGLISH,"w");
+    putdata(path,word_total);
+    fclose(path);
+
+    //释放空间
+    //释放今日数组
+    mwal_delete(&word_today);
+
+    //释放总单词数组
+    mwal_delete(&word_total);
+
+    //释放应用信息
+    for(int i=0;i<myapp.kindSize;i++){
+        free(myapp.kind[i]);
+    }
+    free(myapp.kind);
 
 }
 
 //应用过程中刷新文件信息(把更新的数据写入文件)，采用多线程的方法使用它
 void app_flash(void){
-
+    //写文件
+    //把app信息写入文件
+    FILE* path=myfopen(MAPP,"w");
+    if(myapp.kind==NULL){   //如果app信息为空
+        fprintf(path,"%d\n",0);
+    }else{  //如果app中记录有分类信息
+        fprintf(path,"%d\n",myapp.kindSize);
+        for(int i=0;i<myapp.kindSize;i++){
+            fprintf(path,"%s\n",myapp.kind[i]);
+        }
+    }
+    fclose(path);
+    //把今天新录单词写入文件
+    //获取今日日期
+    char* time=get_time_str();
+    //获取
+    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+2;
+    char* today=(char*)malloc(sizeof(char)*len);
+    sprintf(today,"%s\\%s.txt",MDAY_CLASSIFY,time);
+    free(time);
+    path=myfopen(today,"w");
+    putdata(path,word_today);
+    fclose(path);
+    free(today);
+    //把总单词信息写入文件
+    path=myfopen(MYENGLISH,"w");
+    putdata(path,word_total);
+    fclose(path);
 }
 
 
 
 //主界面
 void main_choice(void){
-
+    // 主界面：开始使用，帮助，设置,以及退出应用
+    char curchoice;
+    char* order[4]={
+        mystrcpy("开始使用"),
+        mystrcpy("帮助"),
+        mystrcpy("设置"),
+        mystrcpy("退出程序")
+    };
+    char choice[4]={'0','1','2','e'};
+    app_init();
+    do{
+        system("cls");
+        show_choice(order,choice,4);
+        curchoice=get_choice(choice,4);
+        switch(curchoice){
+            case '0':
+                system("cls");
+                start_choice();
+            break;
+            case '1':
+                system("cls");
+                help_choice();
+            break;
+            case '2':
+                system("cls");
+                set_choice();
+            break;
+            default:
+                app_end();
+            break;
+        }
+    }while(curchoice!='e');
+    //释放空间
+    for(int i=0;i<4;i++){
+        free(order[i]);
+    }
 }
 
-//退出主界面,退出主界面的时候才会把一切写入文件之中
-void main_exit(void){
-
-}
 
 //设置界面
 void set_choice(void){
-
+    printf("尚未完成\n");
+    system("pause");
 }
 
 //帮助界面
 void help_choice(void){
-
+    printf("尚未完成\n");
+    system("pause");
 }
 
 //开始使用界面
 void start_choice(void){
-
+    // 开始使用：添加单词,今日复习，阅览单词，退出
+    //设计命令
+    int len=4;
+    char* order[len]={
+        mystrcpy("添加单词"),
+        mystrcpy("今日复习"),
+        mystrcpy("阅览单词"),
+        mystrcpy("退出")
+    };
+    char choice[len]={
+        '0','1','2','e'
+    };
+    char curchoice;
+    do{
+        show_choice(order,choice,len);
+        curchoice=get_choice(choice,len);
+    }while(curchoice!=choice[3]);
+    //释放空间
+    for(int i=0;i<len;i++){
+        free(order[i]);
+    }
 }
 
 //添加单词界面，添加的单词默认为无类型,但可以选择类型（但是只加不改）
 void mywordadd(void){
-
+    
 }
 
 //今日复习界面

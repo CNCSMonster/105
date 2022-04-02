@@ -96,8 +96,6 @@ void app_flash(void);
 //主界面
 void main_choice(void);
 
-//退出主界面,退出主界面的时候才会把一切写入文件之中
-void main_exit(void);
 
 //设置界面
 void set_choice(void);

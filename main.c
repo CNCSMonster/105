@@ -13,7 +13,10 @@ int main(){
     sentence:Hunman need water.
     */
     //单词限制为一个，中文解释限制为一个。
-   
+    
+    main_choice();
+
+
 
     return 0;
 
