@@ -108,7 +108,7 @@ char *inttostr(int num){
     }mh,*mt,*mhp;
     mh.next=NULL;
     mhp=NULL;
-    int len;
+    int len=0;
     if(num<0){
         num=-num;
         mt->next=(struct myints*)malloc(sizeof(struct myints));

@@ -14,9 +14,6 @@ int main(){
     */
     //单词限制为一个，中文解释限制为一个。
    
-    char* time=get_time_str();
-    printf("%s",time);
-    free(time);
 
     return 0;
 
