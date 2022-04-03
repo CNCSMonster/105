@@ -5,13 +5,16 @@
 Mwal getdata(FILE* path){
     //读取形式，直接读取。每两个单词之间距离为一个换行符
     Mwal out=mwal_cre();
+    int cur;
     while(!feof(path)){//当文件没有读到尽头时
+        fscanf(path,"%d.\n",&cur);
         Word term=word_read(path);
         if(word_isempty(term)){
             break;
         }
         mwal_add(&out,term);
         word_delete(term);
+        fgetc(path);
     }
     return out;
 }
@@ -20,11 +23,14 @@ Mwal getdata(FILE* path){
 void putdata(FILE* target,Mwal mwal){
     //把文章写入目标文件
     Mwalp term=&mwal;
+    int len=0;
     while(term!=NULL){
         Mwa mwa=term->mwa;
         for(int i=0;i<mwa.num;i++){
+            fprintf(target,"%d.\n",len+1);
+            len++;
             word_fput(target,mwa.word_arr[i]);
-            fputc('\n',target);
+            fputs("\n\n",target);
         }
         term=term->next;
     }
@@ -120,12 +126,11 @@ void app_init(void){
     //获取今日日期
     char* time=get_time_str();
     //获取
-    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+6;
-    char* today=(char*)malloc(sizeof(char)*len);
+    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+7;
+    char today[len];
     sprintf(today,"%s\\%s.txt",MDAY_CLASSIFY,time);
     free(time);
     path=myfopen(today,"r");
-    free(today);
     if(path==NULL){
         //如果今天的文件信息不存在
         word_today=mwal_cre();
@@ -190,7 +195,7 @@ void app_end(void){
     //获取今日日期
     char* time=get_time_str();
     //获取
-    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+2;
+    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+6;
     char* today=(char*)malloc(sizeof(char)*len);
     sprintf(today,"%s\\%s.txt",MDAY_CLASSIFY,time);
     free(time);
@@ -237,7 +242,7 @@ void app_flash(void){
     //获取今日日期
     char* time=get_time_str();
     //获取
-    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+2;
+    int len=mystrlen(time)+mystrlen(MDAY_CLASSIFY)+7;
     char* today=(char*)malloc(sizeof(char)*len);
     sprintf(today,"%s\\%s.txt",MDAY_CLASSIFY,time);
     free(time);
@@ -245,6 +250,7 @@ void app_flash(void){
     putdata(path,word_today);
     fclose(path);
     free(today);
+    
     //把总单词信息写入文件
     path=myfopen(MYENGLISH,"w");
     putdata(path,word_total);
@@ -384,21 +390,19 @@ void mywordadd(void){
             Word add=word_get();
             char* jud=word_iflegal(add);
             if(jud!=NULL){ //如果输入错误
-                printf("你的输入%s",jud);
+                printf("输入错误：%s",jud);
                 free(jud);
                 printf("\n************************************************\n");
             }else if(mwal_find(&word_total,add.word)!=NULL){  //如果这个单词已经输入过了
                 printf("该单词已被输入\n");
                 printf("\n************************************************\n");
-                word_delete(add);
             }else{  //可以添加，添加
                 printf("添加完成！\n");
                 mwal_add(&word_total,add);
                 mwal_add(&word_today,add);
-                word_delete(add);
                 printf("\n************************************************\n");
             }
-            continue;
+            word_delete(add);
         }
     }while(1);
 
@@ -561,8 +565,8 @@ void divide_show(Mwal show){
         system("cls");
         Mwalp cur_show=cur_mwalp;
         int index_show=cur_index;
-        for(int i=0;i<max&&i<cur_show->mwa.num;i++){
-            printf("\n");
+        for(int i=0;i<max;i++){
+            printf("\n*********************************\n");
             word_show(cur_show->mwa.word_arr[index_show]);
             index_show++;
             if(index_show==WORD_ARR_MAX){   //如果当前的数组结点读取到头了
@@ -572,14 +576,13 @@ void divide_show(Mwal show){
                 }else{  //否则结束循环
                     break;
                 }
+            }else if(index_show>=cur_show->mwa.num){
+                break;
             }
         }
         printf("\n当前页数/总页数:%d/%d",cur_page+1,totalpage);
         printf("\n往前/往后翻页/退出查看:a/d/e");
         cur_choice=getch();
-        while(cur_choice!='a'&&cur_choice!='d'&&cur_choice!='e'){
-            cur_choice=getch();
-        }
         if(cur_choice=='e'){
             break;
         }else{      //不达成循环效果，达到下(上)边界后就不能够减(增)

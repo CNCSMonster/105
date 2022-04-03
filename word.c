@@ -181,11 +181,17 @@ char* word_tostr(Word word){
     return out;
 }
 
-//删除单词变量
+//安全删除单词变量，如果是没有释放的空间，就会释放
 void word_delete(Word word){
-    free(word.word);
-    free(word.meaning);
-    free(word.sentence);
+    if(word.word!=NULL){
+        free(word.word);
+    }
+    if(word.meaning!=NULL){
+        free(word.meaning);
+    }
+    if(word.sentence!=NULL){
+        free(word.sentence);
+    }
 }
 
 
@@ -205,7 +211,7 @@ Mwal mwal_cre(void){
 如果这个单词已经存在，则返回这个单词的引用(单词指针)
 如果这个单词不存在，则返回空指针*/
 Wordp mwal_find(Mwalp mwalh,char* word){
-    if(mwalh==NULL){
+    if(mwalh==NULL||word==NULL){
         return NULL;
     }
     while(mwalh!=NULL){

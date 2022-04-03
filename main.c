@@ -1,6 +1,6 @@
 #include "all.h"
 
-#define MYENGLISH "E:\\Eglishword\\wordall.txt"
+
 
 
 int main(){

@@ -13,8 +13,8 @@ void gettime(int* year,int* month,int* day){
 }
 
 /*
-获得表示当天日期的字符串，格式为：20xx/(x)x/(x)x,
-也就是年/月/日，*/
+获得表示当天日期的字符串，格式为：20xx_(x)x_(x)x,
+也就是年_月_日，*/
 char* get_time_str(void){
     char* out;
     int year;
@@ -26,7 +26,7 @@ char* get_time_str(void){
     char* ds=inttostr(day);
     int len=strlen(ys)+strlen(ms)+strlen(ds)+2;
     out=(char*)malloc(sizeof(char)*(len+1));
-    sprintf(out,"%s/%s/%s",ys,ms,ds);
+    sprintf(out,"%s_%s_%s",ys,ms,ds);
     free(ys);
     free(ms);
     free(ds);
