@@ -51,6 +51,34 @@ void putdata(FILE* target,Mwal mwal){
 
 //实现界面
 //界面显示,显示len条选项
+
+void gotoxy(int x, int y)
+{    
+    COORD c;    
+    c.X = x ;    
+    c.Y = y ;    
+    SetConsoleCursorPosition (GetStdHandle(STD_OUTPUT_HANDLE), c);    
+}
+
+
+
+void GetCurrentCursorPosition(int &x,int &y)
+{
+    // undefined
+    HANDLE   hStdout;
+    CONSOLE_SCREEN_BUFFER_INFO   pBuffer;
+    hStdout   =   GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hStdout,   &pBuffer);
+    x=pBuffer.dwCursorPosition.X;
+    y=pBuffer.dwCursorPosition.Y;
+}
+
+
+
+
+
+
+
 void show_choice(char** sa,char* choice,int len){
     printf("\n");
     for(int i=0;i<len;i++){
@@ -302,13 +330,16 @@ void main_choice(void){
 
 //设置界面
 void set_choice(void){
-    printf("尚未完成\n");
+    printf("自定义按键");
+    printf("设置工作目录"); 
     system("pause");
 }
 
 //帮助界面
 void help_choice(void){
-    printf("尚未完成\n");
+    printf("\n根据提示输入命令使用功能");
+    printf("\n更新的数据只有在程序使用退出方法退出后才会写入文件");
+    printf("\n导出md文档默认导出到程序所在的目录\n");
     system("pause");
 }
 
@@ -393,14 +424,16 @@ void mywordadd(void){
                 printf("输入错误：%s",jud);
                 free(jud);
                 printf("\n************************************************\n");
-            }else if(mwal_find(&word_total,add.word)!=NULL){  //如果这个单词已经输入过了
-                printf("该单词已被输入\n");
-                printf("\n************************************************\n");
-            }else{  //可以添加，添加
-                printf("添加完成！\n");
-                mwal_add(&word_total,add);
-                mwal_add(&word_today,add);
-                printf("\n************************************************\n");
+            }else{
+                int jud=mwal_add(&word_today,add);  //先试探着加入今日单词
+                if(jud==0){
+                    printf("该单词已被输入\n");
+                    printf("\n************************************************\n");
+                }else{  //如果该单词可以添加
+                    mwal_add(&word_total,add);  //加入总单词
+                    printf("添加完成！\n");
+                    printf("\n************************************************\n");
+                }
             }
             word_delete(add);
         }
@@ -640,12 +673,12 @@ void outputmd(void){
     fprintf(mf,"# My English Word Book\n\n");    //写入大标题
     fprintf(mf,"[TOC]\n\n");     //写入目录
     fprintf(mf,"## A. total words\n\n");    //写入次级标题
-    putdata(mf,word_total);
+    md_putdata(mf,word_total);
     fprintf(mf,"\n\n## B. division");
     for(int i=0;i<myapp.kindSize;i++){  
         fprintf(mf,"\n\n### %d. %s",i+1,myapp.kind[i]);
         Mwal term=mwal_get_kindpart(&word_total,i);
-        putdata(mf,term);
+        md_putdata(mf,term);
         mwal_delete(&term);
     }
     fclose(mf);
@@ -654,7 +687,46 @@ void outputmd(void){
     getch();
 }   
 
-
+//专门在导出md文档中使用的mdputdata
+void md_putdata(FILE* target,Mwal mwal){
+    Mwalp term=&mwal;
+    int len=0;
+    int len_total=mwal_getsize(mwal);   //计算mwal的单词数量
+    //通过单词数量判断要几级标题，考虑到单词数量在10000左右，所以标题控制在2级(百，千)
+    int level_num;  //小标题的级别数量
+    //如果不超过2000个单词，采用1级标题，a,b,c,d
+    //如果超过两千个单词，采用2级别，A每1000，a每100
+    if(len_total<=10*WORD_ARR_MAX){
+        level_num=1;
+    }else{
+        level_num=2;
+    }
+    int low=0;  //标记小标题
+    int top=0;  //标记大标题
+    //每一百个单词分一个部分
+    while(term!=NULL){
+        Mwa mwa=term->mwa;
+        //先打标题
+        if(level_num==1){   //如果只有一级
+            fprintf(target,"### (%c)\n",low+97);
+            low++;
+        }else{  //如果有两级
+            if(low%10==0){  //打印大标题
+                fprintf(target,"### (%c)\n",top+65);
+                top++;
+            }
+            fprintf(target,"#### (%c).\n",low%10+97);
+        }
+        for(int i=0;i<mwa.num;i++){
+            fprintf(target,"%d.\n",len+1);
+            len++;
+            Word ttt=mwa.word_arr[i];
+            fprintf(target,"%s\n%s\n%s\n",ttt.word,ttt.meaning,ttt.sentence);
+            fputs("\n\n",target);
+        }
+        term=term->next;
+    }
+}
 
 
 

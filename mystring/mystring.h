@@ -17,7 +17,7 @@ char* mystr_cre(void);
 
 /*
 从文件动态读取一个字符串，遇到\\n或者文件终止符停止
-如果读取内容为空，返回NULL,否则返回字符串指针*/
+返回读取到的字符串指针*/
 char* mystr_read(FILE* target); 
 
 

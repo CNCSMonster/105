@@ -11,10 +11,10 @@ Word word_get(void){
     Word out;
     out.kind=WORD_DEFAULT_KIND;     //单词类型为默认类型
     printf("Word:\t");
-    out.word=mystr_read(stdin);
+    out.word=mystr_read(stdin); //meaning和word不能为空
     printf("meaning:\t");
     out.meaning=mystr_read(stdin);
-    printf("sentence:\t");
+    printf("sentence:\t");      //sentence可以为空
     out.sentence=mystr_read(stdin);
     return out;
 }
@@ -22,12 +22,15 @@ Word word_get(void){
 //判断一个单词变量是否是合法的，并返回提示信息
 char* word_iflegal(Word word){
     char* out=mystr_cre();
-    if(word_isempty(word)){
-        out=mystr_add(out,"输入为空");
+    if(mystreq(word.word,"")){
+        out=mystr_add(out,"单词输入为空/");
     }else{
         if(!mystr_if_e(word.word)){
-            out=mystr_add(out,"单词输入不是英文");
+            out=mystr_add(out,"单词输入不是英文/");
         }
+    }
+    if(mystreq(word.meaning,"")){
+        out=mystr_add(out,"单词释义输入为空");
     }
     if(strlen(out)==0){
         free(out);
@@ -46,23 +49,12 @@ Word word_read(FILE* path){
     out.sentence=NULL;
     out.kind=WORD_DEFAULT_KIND;    //单词类型为头文件定义的默认类型
     int jud=fscanf(path,"%d\n",&(out.kind));
-    if(jud!=1){
+    if(jud!=1){ //读取失败
         return out;
     }
     out.word=mystr_read(path);
-    if(out.word==NULL){
-        return out;
-    }
     out.meaning=mystr_read(path);
-    if(out.meaning==NULL){
-        free(out.word);
-    }
     out.sentence=mystr_read(path);
-    if(out.sentence==NULL){
-        free(out.word);
-        free(out.meaning);
-        return out;
-    }
     return out;
 }
 
@@ -137,24 +129,35 @@ Word word_cpy(Word base){
     int len;
     out.kind=base.kind;
     len=strlen(base.word);
-    // out.word=mystrcpy(base.word);
-    // out.meaning=mystrcpy(base.meaning);
-    // out.sentence=mystrcpy(base.sentence);
+    if(out.word!=NULL){
+        out.word=mystrcpy(base.word);
+    }else{
+        out.word=NULL;
+    }
+    if(out.meaning!=NULL){
+        out.meaning=mystrcpy(base.meaning);
+    }else{
+        out.meaning=NULL;
+    }
+    if(out.sentence!=NULL){
+        out.sentence=mystrcpy(base.sentence);
+    }else{
+        out.sentence=NULL;
+    }
+    // //新方法
+    // out.word=(char *)malloc(sizeof(char)*(len+1));
+    // out.word[len]='\0';
+    // memcpy(out.word,base.word,sizeof(char)*len);
 
-    //新方法
-    out.word=(char *)malloc(sizeof(char)*(len+1));
-    out.word[len]='\0';
-    memcpy(out.word,base.word,sizeof(char)*len);
+    // len=strlen(base.meaning);
+    // out.meaning=(char *)malloc(sizeof(char)*(len+1));
+    // out.meaning[len]='\0';
+    // memcpy(out.meaning,base.meaning,sizeof(char)*len);
 
-    len=strlen(base.meaning);
-    out.meaning=(char *)malloc(sizeof(char)*(len+1));
-    out.meaning[len]='\0';
-    memcpy(out.meaning,base.meaning,sizeof(char)*len);
-
-    len=strlen(base.sentence);
-    out.sentence=(char *)malloc(sizeof(char)*(len+1));
-    out.sentence[len]='\0';
-    memcpy(out.sentence,base.sentence,sizeof(char)*len);
+    // len=strlen(base.sentence);
+    // out.sentence=(char *)malloc(sizeof(char)*(len+1));
+    // out.sentence[len]='\0';
+    // memcpy(out.sentence,base.sentence,sizeof(char)*len);
     return out;
 }
 

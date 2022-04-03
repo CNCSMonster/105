@@ -12,7 +12,7 @@ char* mystr_cre(void){ //获得空白字符串
 
 /*
 从文件动态读取一个字符串，遇到\\n或者文件终止符停止
-如果读取内容为空，返回NULL,否则返回字符串指针
+返回读取到字符串指针，如果读取为空，则返回空串
 */
 char* mystr_read(FILE* target){
     char* out;
@@ -35,15 +35,6 @@ char* mystr_read(FILE* target){
             len++;
         }
     }while(1);
-    if(len==0){
-        ms_t=&ms_h;
-        for(int i=0;i<len;i++){
-            struct mstr* term=ms_t->next;
-            ms_t->next=ms_t->next->next;
-            free(term);
-        }
-        return NULL;
-    }
     out=(char*)malloc(sizeof(char)*(len+1));
     out[len]='\0';
     ms_t=&ms_h;

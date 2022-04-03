@@ -65,6 +65,20 @@ void putdata(FILE* target,Mwal mwal);
 */
 
 //实现界面
+
+//获取输入光标位置，和移动输入光标到所需位置
+
+//移动输入光标到指定位置
+void gotoxy(int x, int y);
+
+
+
+
+//获取指针
+void GetCurrentCursorPosition(int* x,int* y);
+
+
+
 //界面显示,显示len条选项
 void show_choice(char** sa,char* choice,int len);
 
@@ -126,7 +140,8 @@ void divide_show(Mwal show);
 //导出md文档，所以会检查输入，根据输入的英文文件名，导出一个md文档
 void outputmd(void);    
 
-
+//专门在导出md文档中使用的mdputdata
+void md_putdata(FILE* target,Mwal mwal);
 
 
 
