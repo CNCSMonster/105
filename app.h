@@ -27,16 +27,16 @@ Mwal word_today;
 #define MAPP_WIDTH 100
 
 //主要单词数据文件
-#define MYENGLISH "E:\\Eglishword\\wordall.txt"
+#define MYENGLISH "E:\\Eglish_word\\wordall.txt"
 
 //应用的数据文件,里面记录了单词分类表等设置信息
-#define MAPP "E:\\Eglishword\\settings.txt"
+#define MAPP "E:\\Eglish_word\\settings.txt"
 
 //按照日期分类的文件存储的文件夹
-#define MDAY_CLASSIFY "E:\\Eglish\\day_classify"
+#define MDAY_CLASSIFY "E:\\Eglish_word\\day_classify"
 
 //我的meaning_classify文件夹
-#define MMN_CLASSIFY "E:\\Eglishword\\meaning_classify"
+#define MMN_CLASSIFY "E:\\Eglish_word\\meaning_classify"
 
 
 //获取一个总的文件
