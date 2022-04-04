@@ -26,17 +26,19 @@ Mwal word_today;
 #define MAPP_HEIGHT 75
 #define MAPP_WIDTH 100
 
+//文件地址使用相对地址
+
 //主要单词数据文件
-#define MYENGLISH "E:\\Eglish_word\\wordall.txt"
+#define MYENGLISH "Eglish_word\\wordall.txt"
 
 //应用的数据文件,里面记录了单词分类表等设置信息
-#define MAPP "E:\\Eglish_word\\settings.txt"
+#define MAPP "Eglish_word\\settings.txt"
 
 //按照日期分类的文件存储的文件夹
-#define MDAY_CLASSIFY "E:\\Eglish_word\\day_classify"
+#define MDAY_CLASSIFY "Eglish_word\\day_classify"
 
 //我的meaning_classify文件夹
-#define MMN_CLASSIFY "E:\\Eglish_word\\meaning_classify"
+#define MMN_CLASSIFY "Eglish_word\\meaning_classify"
 
 
 //获取一个总的文件
@@ -71,10 +73,7 @@ void putdata(FILE* target,Mwal mwal);
 //移动输入光标到指定位置
 void gotoxy(int x, int y);
 
-
-
-
-//获取指针
+//获取输入光标当前的位置
 void GetCurrentCursorPosition(int* x,int* y);
 
 
@@ -130,6 +129,10 @@ void view_choice(void);
 
 //搜索想找的单词，并且可以对搜索到的单词操作
 void view_find(void);
+
+//修改或者删除单词，提供对一个单词的修改,删除
+void word_edit(Wordp wordp);
+
 
 //分类界面,选择分类进行查看，只读不改
 void divide_choice(void);

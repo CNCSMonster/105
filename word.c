@@ -286,6 +286,43 @@ int mwal_getsize(Mwal mwal){
     return out;
 }
 
+//从单词数组中删除一个单词,删除成功返回1，否则返回-1
+int mwal_de_word(Mwalp mwalp,char* word){
+    //本质上交换两个单词，一个是要删除的单词，一个是末尾的单词。
+    //两个单词重合的情况稍后考虑
+    Wordp wordp=mwal_find(mwalp,word);
+    if(wordp==NULL){
+        return 0;
+    }
+    //找到了要删除的单词之后，再找末尾的单词
+    Mwalp term=mwalp;
+    Mwalp fa;   //存储term的上个节点，但term不为头节点时
+    while(term->next!=NULL){    //来到最后一个节点
+        fa=term;
+        term=term->next;
+    }
+    Wordp word_t=&(term->mwa.word_arr[term->mwa.num-1]);
+    if(word_t==wordp){
+        //如果末尾单词与要删除的单词相同
+        if(term->mwa.num==1){   //如果这是这一节点最后一个单词
+            fa->next==NULL;
+            free(term);
+            word_delete(*word_t);
+        }else{
+            word_delete(*word_t);
+            term->mwa.num--;
+        }
+    }else{
+        word_delete(*wordp);
+        *wordp=word_cpy(*word_t);
+        word_delete(*word_t);
+        if()
+
+    }
+    
+    
+}
+
 //清空一个数组链表
 void mwal_delete(Mwalp mwalp){
     if(mwalp==NULL){

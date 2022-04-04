@@ -62,15 +62,15 @@ void gotoxy(int x, int y)
 
 
 
-void GetCurrentCursorPosition(int &x,int &y)
+void GetCurrentCursorPosition(int* x,int* y)
 {
     // undefined
     HANDLE   hStdout;
     CONSOLE_SCREEN_BUFFER_INFO   pBuffer;
     hStdout   =   GetStdHandle(STD_OUTPUT_HANDLE);
     GetConsoleScreenBufferInfo(hStdout,   &pBuffer);
-    x=pBuffer.dwCursorPosition.X;
-    y=pBuffer.dwCursorPosition.Y;
+    *x=pBuffer.dwCursorPosition.X;
+    *y=pBuffer.dwCursorPosition.Y;
 }
 
 
@@ -486,10 +486,81 @@ void view_choice(void){
 //搜索想找的单词，并且可以对搜索到的单词操作
 void view_find(void){
     //功能界面
-    printf("暂时没有实现");
-    system("pause");
+    printf("命令提示: e--退出,s--搜索,c--清屏,\n");
+    char cur_choice;
+    do{
+        printf("you choose:");
+        cur_choice=getch();
+        fflush(stdin);
+        printf("\r");
+        printf("                   ");
+        printf("\r");
+        if(cur_choice=='s'){
+            printf("输入你想要搜索的单词:");
+            char* s=mystr_read(stdin);
+            Wordp term=mwal_find(&word_total,s);
+            if(term==NULL){ //如果该单词没有输入过
+                printf("该单词未输入\n");
+                printf("**********************\n");
+            }else{      //如果该单词已经输入，进入修改
+                word_edit(term);
+                printf("**********************\n");
+            }
+        }else if(cur_choice=='c'){
+            system("cls");
+            printf("命令提示: e--退出,s--搜索,c--清屏,\n");
+        }
+    }while(cur_choice!='e');
 }
 
+//修改或者删除单词，提供对一个单词的修改,删除
+void word_edit(Wordp wordp){
+    //对单词的本身和意思和它的存在都可以进行修改
+    //可以把它完全改成令一个单词
+    Word cpy=word_cpy(*wordp);  //复制原单词
+    char cur_choice;
+    printf("按键命令:e--退出修改,d--删除这个单词，其他--继续修改\n");
+    cur_choice==getch();
+    if(cur_choice=='e'){
+        word_delete(cpy);
+        return;
+    }else if(cur_choice=='d')
+        word_delete(cpy);
+        //从总单词库中和今日单词中都删除这个单词
+        
+    }
+    do{
+        system("cls");
+        printf("当前该单词信息：\n");
+        word_show(cpy);
+        printf("更改为:");
+        Word cc=word_read(stdin);
+        if(mwal_find(&word_total,cc.word)==NULL||mystreq(cc.word,cpy.word)){
+            //如果修改后不添加重复的单词信息。则修改可能合法
+            word_delete(*wordp);
+            *wordp=word_cpy(cc);
+            Wordp tt=mwal_find(&word_today,cpy.word);
+            if(tt!=NULL){   //如果今日数组里面也有这个单词，则这个单词也要修改
+                word_delete(*tt);
+                *tt=word_cpy(cc);
+            }
+            word_delete(cpy);
+            cpy=word_cpy(cc);
+            printf("修改成功!\n");
+        }else{
+            //修改不合法
+            printf("修改后库中会有两个%s,修改无效！\n",cc.word);
+            word_delete(cc);
+        }
+        printf("按键命令:e--退出修改,d--删除这个单词，其他--继续修改\n");
+        cur_choice=getch();
+        fflush(stdin);
+        if(cur_choice=='e'){
+            break;
+        }
+    }while(1);
+    word_delete(cpy);
+}
 
 //分类界面,选择分类进行查看，只读不改
 void divide_choice(void){

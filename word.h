@@ -105,6 +105,9 @@ Mwal mwal_get_kindpart(Mwalp mwalp,int kind);
 //从单词数组链表中获得数组链表中的单词的个数
 int mwal_getsize(Mwal mwal);
 
+//从单词数组中删除一个单词
+int mwal_de_word(Mwalp mwalp,char* word);
+
 //清空一个单词数组链表，释放里面所有空间
 void mwal_delete(Mwalp mwalp);
 
