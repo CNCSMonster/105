@@ -1,29 +1,25 @@
 {
-    "tasks": [
-        {
-            "type": "cppbuild",
-            "label": "C/C++: gcc.exe 生成活动文件",
-            "command": "D:\\MGW64\\mingw64\\bin\\gcc.exe",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "detail": "调试器生成的任务。"
+    "version": "2.0.0",
+    "command": "gcc",       //使用gcc来编译c程序，使用g++来编译cpp程序
+    "args": [
+        "-g",
+        "${file}",
+        "-o",
+        "${workspaceFolder}/0exe/${fileBasenameNoExtension}.exe"    //设置生成后的exe存放在工作区域下的0exe文件夹里,工作区域就是.vscode的同级区域，也就是其上级文件夹以内
+    ], // 编译命令参数
+    "problemMatcher": {
+        "owner": "cpp",
+        "fileLocation": [
+            "relative",
+            "\\"
+        ],
+        "pattern": {
+            "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
         }
-    ],
-    "version": "2.0.0"
-    
+    }
 }

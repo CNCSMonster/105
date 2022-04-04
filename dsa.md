@@ -1,33 +1,34 @@
 # My English Word Book
 
-[TOC]
+\[TOC\]
 
 ## A. total words
 
-1.
+1. 
+
 0
 sdf
 sdga
 fa
 
-2.
+1. 
+
 0
 s
 sd
 
+1. 
 
-3.
 0
 sdfa
 agad
 sdfa
 
-4.
+1. 
+
 0
 e
 fssf
 sef
-
-
 
 ## B. division

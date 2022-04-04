@@ -126,25 +126,25 @@ Word str_to_word(char* s){
 //复制一个单词
 Word word_cpy(Word base){
     Word out;
-    int len;
     out.kind=base.kind;
-    len=strlen(base.word);
-    if(out.word!=NULL){
+    if(base.word!=NULL){
         out.word=mystrcpy(base.word);
     }else{
         out.word=NULL;
     }
-    if(out.meaning!=NULL){
+    if(base.meaning!=NULL){
         out.meaning=mystrcpy(base.meaning);
     }else{
         out.meaning=NULL;
     }
-    if(out.sentence!=NULL){
+    if(base.sentence!=NULL){
         out.sentence=mystrcpy(base.sentence);
     }else{
         out.sentence=NULL;
     }
     // //新方法
+    // int len;
+    // len=strlen(base.word);
     // out.word=(char *)malloc(sizeof(char)*(len+1));
     // out.word[len]='\0';
     // memcpy(out.word,base.word,sizeof(char)*len);
@@ -302,25 +302,16 @@ int mwal_de_word(Mwalp mwalp,char* word){
         term=term->next;
     }
     Wordp word_t=&(term->mwa.word_arr[term->mwa.num-1]);
-    if(word_t==wordp){
-        //如果末尾单词与要删除的单词相同
-        if(term->mwa.num==1){   //如果这是这一节点最后一个单词
-            fa->next==NULL;
-            free(term);
-            word_delete(*word_t);
-        }else{
-            word_delete(*word_t);
-            term->mwa.num--;
-        }
-    }else{
-        word_delete(*wordp);
-        *wordp=word_cpy(*word_t);
-        word_delete(*word_t);
-        if()
 
+    //删除结尾单词
+    word_delete(*wordp);
+    *wordp=word_cpy(*word_t);
+    term->mwa.num--;
+    if(term->mwa.num==0&&term!=mwalp){
+        fa->next=NULL;
+        free(term);
     }
-    
-    
+    return 1;
 }
 
 //清空一个数组链表

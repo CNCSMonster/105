@@ -2,6 +2,9 @@
 #ifndef _APP_H_ //如果没有引入头文件app.h
     #define _APP_H_ //那就引入头文件app.h
 
+#include <windows.h>
+
+
 #include "word.h"
 #include "mytime.h"
 #include "mystring\\mystring.h"
@@ -29,16 +32,16 @@ Mwal word_today;
 //文件地址使用相对地址
 
 //主要单词数据文件
-#define MYENGLISH "Eglish_word\\wordall.txt"
+#define MYENGLISH "E:\\Eglish_word\\wordall.txt"
 
 //应用的数据文件,里面记录了单词分类表等设置信息
-#define MAPP "Eglish_word\\settings.txt"
+#define MAPP "E:\\Eglish_word\\settings.txt"
 
 //按照日期分类的文件存储的文件夹
-#define MDAY_CLASSIFY "Eglish_word\\day_classify"
+#define MDAY_CLASSIFY "E:\\Eglish_word\\day_classify"
 
 //我的meaning_classify文件夹
-#define MMN_CLASSIFY "Eglish_word\\meaning_classify"
+#define MMN_CLASSIFY "E:\\Eglish_word\\meaning_classify"
 
 
 //获取一个总的文件

@@ -490,8 +490,8 @@ void view_find(void){
     char cur_choice;
     do{
         printf("you choose:");
-        cur_choice=getch();
         fflush(stdin);
+        cur_choice=getch();
         printf("\r");
         printf("                   ");
         printf("\r");
@@ -504,7 +504,6 @@ void view_find(void){
                 printf("**********************\n");
             }else{      //如果该单词已经输入，进入修改
                 word_edit(term);
-                printf("**********************\n");
             }
         }else if(cur_choice=='c'){
             system("cls");
@@ -520,21 +519,23 @@ void word_edit(Wordp wordp){
     Word cpy=word_cpy(*wordp);  //复制原单词
     char cur_choice;
     printf("按键命令:e--退出修改,d--删除这个单词，其他--继续修改\n");
+    fflush(stdin);
     cur_choice==getch();
     if(cur_choice=='e'){
         word_delete(cpy);
         return;
-    }else if(cur_choice=='d')
-        word_delete(cpy);
+    }else if(cur_choice=='d'){
         //从总单词库中和今日单词中都删除这个单词
-        
+        mwal_de_word(&word_total,cpy.word);
+        mwal_de_word(&word_today,cpy.word);
+        word_delete(cpy);
+        return; //删除了单词就可以退出该界面了
     }
     do{
-        system("cls");
         printf("当前该单词信息：\n");
         word_show(cpy);
-        printf("更改为:");
-        Word cc=word_read(stdin);
+        printf("\n更改为:\n");
+        Word cc=word_get();
         if(mwal_find(&word_total,cc.word)==NULL||mystreq(cc.word,cpy.word)){
             //如果修改后不添加重复的单词信息。则修改可能合法
             word_delete(*wordp);
@@ -545,20 +546,24 @@ void word_edit(Wordp wordp){
                 *tt=word_cpy(cc);
             }
             word_delete(cpy);
-            cpy=word_cpy(cc);
+            cpy=cc;
             printf("修改成功!\n");
         }else{
             //修改不合法
             printf("修改后库中会有两个%s,修改无效！\n",cc.word);
             word_delete(cc);
         }
-        printf("按键命令:e--退出修改,d--删除这个单词，其他--继续修改\n");
+        printf("\n按键命令:e--退出修改,d--删除这个单词，其他--继续修改\n");
         cur_choice=getch();
         fflush(stdin);
-        if(cur_choice=='e'){
-            break;
+        printf("**********************************\n");
+        if(cur_choice=='d'){
+            //从总单词库中和今日单词中都删除这个单词
+            mwal_de_word(&word_total,cpy.word);
+            mwal_de_word(&word_today,cpy.word);
+            break; //删除了单词就可以退出该界面了
         }
-    }while(1);
+    }while(cur_choice!='e');
     word_delete(cpy);
 }
 
@@ -779,14 +784,15 @@ void md_putdata(FILE* target,Mwal mwal){
         Mwa mwa=term->mwa;
         //先打标题
         if(level_num==1){   //如果只有一级
-            fprintf(target,"### (%c)\n",low+97);
+            fprintf(target,"#### (%c)\n",low+97);
             low++;
         }else{  //如果有两级
             if(low%10==0){  //打印大标题
-                fprintf(target,"### (%c)\n",top+65);
+                fprintf(target,"#### (%c)\n",top+65);
                 top++;
             }
-            fprintf(target,"#### (%c).\n",low%10+97);
+            fprintf(target,"##### (%c).\n",low%10+97);
+            low++;
         }
         for(int i=0;i<mwa.num;i++){
             fprintf(target,"%d.\n",len+1);
@@ -795,6 +801,7 @@ void md_putdata(FILE* target,Mwal mwal){
             fprintf(target,"%s\n%s\n%s\n",ttt.word,ttt.meaning,ttt.sentence);
             fputs("\n\n",target);
         }
+        len=0;
         term=term->next;
     }
 }

@@ -16,6 +16,8 @@ int main(){
 
     main_choice();
 
+    
+
     // //单元测试，divide_show 
     // Mwal m=mwal_cre();
     // Word w=word_get();
@@ -23,7 +25,7 @@ int main(){
     // printf("显示分类");
     // divide_show(m);
     // getch();
-
+    getch();
     return 0;
 
 }
