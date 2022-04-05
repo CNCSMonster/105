@@ -3,12 +3,14 @@
     #define _APP_H_ //那就引入头文件app.h
 
 #include <windows.h>
+#include <process.h>
 
 
 #include "word.h"
 #include "mytime.h"
 #include "mystring\\mystring.h"
 #include "myrecord\\record.h"
+
 
 
 //在这个文件里面将会实现软件的主要功能
@@ -24,6 +26,9 @@ App myapp;  //定义全局变量存储内容信息
 Mwal word_total;    //定义全局的存储信息的单词存储单元
 
 Mwal word_today;
+
+//hashchange为o表示没有发生数据改变，不刷新，为n表示发生数据改变，刷新，(刷新完后归0)，e表示结束线程
+char haschange;  //用来做线程锁，标识线程的开始暂停与结束。控制刷新文件数据的时间
 
 //设置一开始打开的控制台窗口大小
 #define MAPP_HEIGHT 75
@@ -106,6 +111,13 @@ void app_end(void);
 
 //应用过程中刷新文件信息(把更新的数据写入文件)，采用多线程的方法使用它
 void app_flash(void);
+
+//用来实现刷新文件信息同步的线程方法,在初始化中调用一次
+void app_use_flash(void); 
+
+//被调用的线程方法
+void app_re_flash(void);
+
 
 
 //主界面

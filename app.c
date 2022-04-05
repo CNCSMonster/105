@@ -201,12 +201,19 @@ void app_init(void){
             fclose(path);
         }
     }
+
+    //初始化应用的同步更新线程信息,同时启动更新线程
+    haschange='o';
+    app_use_flash();
 }
 
 //应用进程结束后写入文件(并释放所有分配了的空间)
 void app_end(void){
-    //写文件
 
+    //关闭刷新文件线程
+    haschange='e';
+
+    //写文件
     //把app信息写入文件
     FILE* path=myfopen(MAPP,"w");
     if(myapp.kind==NULL){   //如果app信息为空
@@ -284,6 +291,27 @@ void app_flash(void){
     putdata(path,word_total);
     fclose(path);
 }
+
+//用来实现刷新文件信息同步的线程方法,在初始化中调用一次
+void app_use_flash(void){
+    _beginthread((void*)app_re_flash,0,NULL);
+}
+
+//被调用的线程方法
+void app_re_flash(void){
+    do{
+        if(haschange=='o'){
+            continue;
+        }else if(haschange=='e'){  //如果是结束标识，退出
+            break;
+        }else if(haschange=='n'){  //如果可以更新
+            app_flash();
+            haschange='o';
+        }
+    }while(1);
+    _endthread();
+}
+
 
 
 
@@ -395,6 +423,7 @@ void mywordadd(void){
     printf("命令:c--清屏,s--设置,e--退出,其他字母--继续:\n");
     //设置处可以设置该界面风格.
     do{//输入之后可以选择下拉也可以选择刷新界面
+        while(haschange=='n');  //暂停该线程，等待更新文件完成
         //不去检查非法输入了，只要选择的不是c/s/e就是添加
         printf("your choice:");
         char curord=getch();
@@ -432,6 +461,7 @@ void mywordadd(void){
                 }else{  //如果该单词可以添加
                     mwal_add(&word_total,add);  //加入总单词
                     printf("添加完成！\n");
+                    haschange='n';
                     printf("\n************************************************\n");
                 }
             }
@@ -520,6 +550,7 @@ void word_edit(Wordp wordp){
     char cur_choice;
     printf("按键命令:e--退出修改,d--删除这个单词，其他--继续修改\n");
     fflush(stdin);
+    while(haschange=='n');  //暂停该线程，等待更新文件完成
     cur_choice==getch();
     if(cur_choice=='e'){
         word_delete(cpy);
@@ -529,9 +560,11 @@ void word_edit(Wordp wordp){
         mwal_de_word(&word_total,cpy.word);
         mwal_de_word(&word_today,cpy.word);
         word_delete(cpy);
+        haschange='n';
         return; //删除了单词就可以退出该界面了
     }
     do{
+        while(haschange=='n');  //暂停该线程，等待更新文件完成
         printf("当前该单词信息：\n");
         word_show(cpy);
         printf("\n更改为:\n");
@@ -548,6 +581,7 @@ void word_edit(Wordp wordp){
             word_delete(cpy);
             cpy=cc;
             printf("修改成功!\n");
+            haschange='n';
         }else{
             //修改不合法
             printf("修改后库中会有两个%s,修改无效！\n",cc.word);
@@ -561,6 +595,7 @@ void word_edit(Wordp wordp){
             //从总单词库中和今日单词中都删除这个单词
             mwal_de_word(&word_total,cpy.word);
             mwal_de_word(&word_today,cpy.word);
+            haschange='n';
             break; //删除了单词就可以退出该界面了
         }
     }while(cur_choice!='e');
